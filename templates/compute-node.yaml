@@ -8,7 +8,7 @@ data:
   spec.json: |
     {
       "format_version": 1.0,
-      "pageserver_connstring": "host={{ include "neon.fullname" . }}-pageserver port=80",
+      "pageserver_connstring": "host={{ include "neon.fullname" . }}-pageserver port=5432",
       "safekeeper_connstrings": [
         "{{ include "neon.fullname" . }}-safekeeper-0.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc.cluster.local:5454",
         "{{ include "neon.fullname" . }}-safekeeper-1.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc.cluster.local:5454",
