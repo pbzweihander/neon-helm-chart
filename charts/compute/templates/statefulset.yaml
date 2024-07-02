@@ -131,7 +131,7 @@ spec:
   - metadata:
       name: compute-node-data
       labels:
-        {{- include "neon-compute.labels" . | nindent 4 }}
+        {{- include "neon-compute.labels" . | nindent 8 }}
     spec:
       {{- with .Values.storage.className }}
       storageClassName: {{ . }}

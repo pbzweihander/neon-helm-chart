@@ -106,9 +106,6 @@ spec:
           items:
           - key: pageserver.toml
             path: pageserver.toml
-      - name: pageserver-data
-        persistentVolumeClaim:
-          claimName: {{ include "neon.fullname" . }}-pageserver
       {{- with .Values.pageserver.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -121,6 +118,20 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: pageserver-data
+      labels:
+        {{- include "neon.pageserver.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.pageserver.storage.className }}
+      storageClassName: {{ . }}
+      {{- end }}
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.pageserver.storage.capacity }}
 ---
 apiVersion: v1
 kind: Service
@@ -141,19 +152,3 @@ spec:
     targetPort: pg
     protocol: TCP
     port: 5432
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ include "neon.fullname" . }}-pageserver
-  labels:
-    {{- include "neon.pageserver.labels" . | nindent 4 }}
-spec:
-  {{- with .Values.pageserver.storage.className }}
-  storageClassName: {{ . }}
-  {{- end }}
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.pageserver.storage.capacity }}
