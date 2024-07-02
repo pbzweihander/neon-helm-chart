@@ -4,7 +4,6 @@ metadata:
   name: {{ include "neon.fullname" . }}-pageserver
   labels:
     {{- include "neon.pageserver.labels" . | nindent 4 }}
-type: Opaque
 data:
   pageserver.toml: |
     broker_endpoint = "http://{{ include "neon.fullname" . }}-storage-broker"
