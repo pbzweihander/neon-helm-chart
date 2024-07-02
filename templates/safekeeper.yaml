@@ -6,6 +6,7 @@ metadata:
     {{- include "neon.safekeeper.labels" . | nindent 4 }}
 spec:
   replicas: 3
+  serviceName: {{ include "neon.fullname" . }}-safekeeper
   selector:
     matchLabels:
       {{- include "neon.safekeeper.labels" . | nindent 6 }}
