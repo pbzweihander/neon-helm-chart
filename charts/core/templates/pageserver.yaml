@@ -9,7 +9,7 @@ data:
     listen_http_addr = "0.0.0.0:9898"
     listen_pg_addr = "0.0.0.0:64000"
     broker_endpoint = "http://{{ include "neon.fullname" . }}-storage-broker"
-    pg_distrib_dir = "/usr/local/v15"
+    pg_distrib_dir = "/usr/local"
 
     [remote_storage]
     {{- with .Values.remoteStorage.endpoint }}
