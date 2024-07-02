@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "neon.fullname" . }}-safekeeper
+  labels:
+    {{- include "neon.safekeeper.labels" . | nindent 4 }}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      {{- include "neon.safekeeper.labels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.safekeeper.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "neon.safekeeper.labels" . | nindent 8 }}
+        {{- with .Values.safekeeper.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      initContainers:
+      - name: storage-broker-wait
+        image: busybox:1.28
+        command: 
+        - sh
+        - -c
+        - |
+          until wget -O - http://{{ include "neon.fullname" . }}-storage-broker/status
+          do echo waiting for storage-broker
+          sleep 2
+          done
+      containers:
+      - name: safekeeper
+        image: {{ .Values.safekeeper.image.repository }}:{{ .Values.safekeeper.image.tag }}
+        imagePullPolicy: {{ .Values.safekeeper.image.pullPolicy }}
+        command: 
+        - safekeeper
+        - --listen-http=0.0.0.0:7676
+        - --listen-pg=0.0.0.0:5454
+        - --id=$(POD_INDEX)
+        - --broker-endpoint=http://{{ include "neon.fullname" . }}-storage-broker
+        - -D
+        - /data
+        env:
+        - name: POD_INDEX
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
+        ports:
+        - name: http
+          containerPort: 7676
+          protocol: TCP
+        - name: pg
+          containerPort: 5454
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /v1/status
+            port: http
+        resources:
+          {{- toYaml .Values.safekeeper.resources | nindent 12 }}
+      {{- with .Values.safekeeper.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.safekeeper.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.safekeeper.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "neon.fullname" . }}-safekeeper
+  labels:
+    {{- include "neon.safekeeper.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "neon.safekeeper.labels" . | nindent 4 }}
+  ports:
+  - name: http
+    targetPort: http
+    protocol: TCP
+    port: 80
+  - name: pg
+    targetPort: pg
+    protocol: TCP
+    port: 5432

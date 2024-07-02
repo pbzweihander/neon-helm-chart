@@ -1,0 +1,65 @@
+nameOverride: ""
+fullnameOverride: ""
+
+auth:
+  username: admin
+  password: ""
+  database: postgres
+
+remoteStorage:
+  endpoint:
+  bucket:
+    name:
+    region:
+    prefix:
+
+computeNode:
+  image:
+    repository: neondatabase/neon
+    pullPolicy: Always
+    tag: latest
+  podAnnotations: {}
+  podLabels: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  storage:
+    className:
+    capacity: 1Gi
+
+pageserver:
+  image:
+    repository: neondatabase/neon
+    pullPolicy: Always
+    tag: latest
+  podAnnotations: {}
+  podLabels: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  storage:
+    className:
+    capacity: 1Gi
+
+safekeeper:
+  image:
+    repository: neondatabase/neon
+    pullPolicy: Always
+    tag: latest
+  podAnnotations: {}
+  podLabels: {}
+  resources: {}
+
+storageBroker:
+  image:
+    repository: neondatabase/neon
+    pullPolicy: Always
+    tag: latest
+  podAnnotations: {}
+  podLabels: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}

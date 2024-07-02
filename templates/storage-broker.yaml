@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "neon.fullname" . }}-storage-broker
+  labels:
+    {{- include "neon.storageBroker.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "neon.storageBroker.labels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.storageBroker.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "neon.storageBroker.labels" . | nindent 8 }}
+        {{- with .Values.storageBroker.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      containers:
+      - name: storage-broker
+        image: {{ .Values.storageBroker.image.repository }}:{{ .Values.storageBroker.image.tag }}
+        imagePullPolicy: {{ .Values.storageBroker.image.pullPolicy }}
+        command: 
+        - storage_broker
+        - --listen-addr=0.0.0.0:50051
+        ports:
+        - name: http
+          containerPort: 50051
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: http
+        resources:
+          {{- toYaml .Values.storageBroker.resources | nindent 12 }}
+      {{- with .Values.storageBroker.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.storageBroker.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.storageBroker.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "neon.fullname" . }}-storage-broker
+  labels:
+    {{- include "neon.storageBroker.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "neon.storageBroker.labels" . | nindent 4 }}
+  ports:
+  - name: http
+    targetPort: http
+    protocol: TCP
+    port: 80
