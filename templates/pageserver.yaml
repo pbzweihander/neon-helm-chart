@@ -54,6 +54,8 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ include "neon.fullname" . }}-pageserver
+      securityContext:
+        fsGroup: 1000
       initContainers:
       - name: storage-broker-wait
         image: busybox:1.28
