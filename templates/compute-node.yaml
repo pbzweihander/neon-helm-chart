@@ -14,6 +14,8 @@ data:
         "{{ include "neon.fullname" . }}-safekeeper-1.{{ include "neon.fullname" . }}-safekeeper",
         "{{ include "neon.fullname" . }}-safekeeper-2.{{ include "neon.fullname" . }}-safekeeper"
       ],
+      "tenant_id": "9ef87a5bf0d92544f6fafeeb3239695c",
+      "timeline_id": "de200bd42b49cc1814412c7e592dd6e9",
       "cluster": {
         "roles": [],
         "databases": [],
