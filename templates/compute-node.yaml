@@ -59,20 +59,15 @@ spec:
         image: {{ .Values.computeNode.image.repository }}:{{ .Values.computeNode.image.tag }}
         imagePullPolicy: {{ .Values.computeNode.image.pullPolicy }}
         command: 
-        - compute_ctl
-        - --pgdata
-        - /var/db/postgres/compute
-        - --constr
-        - postgresql://$(CONNSTR_USERNAME):$(CONNSTR_PASSWORD)@0.0.0.0:5432/$(CONNSTR_DATABASE)
-        - --pgbin
-        - /usr/local/bin/postgres
-        - --compute-id
-        - id=$(POD_INDEX)
+        - sh
+        - -c
+        - |
+          compute_ctl \
+            --pgdata=/var/db/postgres/compute \
+            --constr=postgresql://${CONNSTR_USERNAME}:${CONNSTR_PASSWORD}@0.0.0.0:5432/${CONNSTR_DATABASE} \
+            --pgbin=/usr/local/bin/postgres \
+            --compute-id=${HOSTNAME##*-}
         env:
-        - name: POD_INDEX
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
         - name: CONNSTR_USERNAME
           valueFrom:
             secretKeyRef:

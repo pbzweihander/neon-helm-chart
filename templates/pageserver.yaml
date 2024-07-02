@@ -70,18 +70,12 @@ spec:
         image: {{ .Values.pageserver.image.repository }}:{{ .Values.pageserver.image.tag }}
         imagePullPolicy: {{ .Values.pageserver.image.pullPolicy }}
         command: 
-        - pageserver
-        - -D
-        - /data/.neon/
+        - sh
         - -c
-        - id=$(POD_INDEX)
-        - -c
-        - 
-        env:
-        - name: POD_INDEX
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
+        - |
+          pageserver \
+            -D /data/.neon/ \
+            -c id=${HOSTNAME##*-}
         ports:
         - name: http
           containerPort: 9898

@@ -37,18 +37,15 @@ spec:
         image: {{ .Values.safekeeper.image.repository }}:{{ .Values.safekeeper.image.tag }}
         imagePullPolicy: {{ .Values.safekeeper.image.pullPolicy }}
         command: 
-        - safekeeper
-        - --listen-http=0.0.0.0:7676
-        - --listen-pg=0.0.0.0:5454
-        - --id=$(POD_INDEX)
-        - --broker-endpoint=http://{{ include "neon.fullname" . }}-storage-broker
-        - -D
-        - /data
-        env:
-        - name: POD_INDEX
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
+        - sh
+        - -c
+        - |
+          safekeeper \
+            --listen-http=0.0.0.0:7676 \
+            --listen-pg=0.0.0.0:5454 \
+            --id=${HOSTNAME##*-} \
+            --broker-endpoint=http://{{ include "neon.fullname" . }}-storage-broker \
+            -D /data
         ports:
         - name: http
           containerPort: 7676
