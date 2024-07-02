@@ -6,6 +6,8 @@ metadata:
     {{- include "neon.pageserver.labels" . | nindent 4 }}
 data:
   pageserver.toml: |
+    listen_http_addr = "0.0.0.0:9898"
+    listen_pg_addr = "0.0.0.0:64000"
     broker_endpoint = "http://{{ include "neon.fullname" . }}-storage-broker"
 
     [remote_storage]
