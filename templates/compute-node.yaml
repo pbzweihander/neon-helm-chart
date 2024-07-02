@@ -19,7 +19,13 @@ data:
       "cluster": {
         "roles": [],
         "databases": [],
-        "settings": []
+        "settings": [
+          {
+              "name": "listen_addresses",
+              "value": "0.0.0.0",
+              "vartype": "string"
+          }
+        ]
       }
     }
 ---
