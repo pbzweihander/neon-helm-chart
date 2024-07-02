@@ -10,9 +10,9 @@ data:
       "format_version": 1.0,
       "pageserver_connstring": "{{ include "neon.fullname" . }}-pageserver",
       "safekeeper_connstrings": [
-        "{{ include "neon.fullname" . }}-safekeeper-0.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc",
-        "{{ include "neon.fullname" . }}-safekeeper-1.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc",
-        "{{ include "neon.fullname" . }}-safekeeper-2.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc"
+        "{{ include "neon.fullname" . }}-safekeeper-0.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc.cluster.local",
+        "{{ include "neon.fullname" . }}-safekeeper-1.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc.cluster.local",
+        "{{ include "neon.fullname" . }}-safekeeper-2.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc.cluster.local"
       ],
       "tenant_id": "9ef87a5bf0d92544f6fafeeb3239695c",
       "timeline_id": "de200bd42b49cc1814412c7e592dd6e9",
