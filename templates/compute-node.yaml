@@ -66,7 +66,7 @@ spec:
         - |
           compute_ctl \
             --pgdata=/var/db/postgres/compute \
-            --constr=postgresql://${CONNSTR_USERNAME}{{ if .Values.auth.password }}:${CONNSTR_PASSWORD}{{ end }}@0.0.0.0:5432/${CONNSTR_DATABASE} \
+            --connstr=postgresql://${CONNSTR_USERNAME}{{ if .Values.auth.password }}:${CONNSTR_PASSWORD}{{ end }}@0.0.0.0:5432/${CONNSTR_DATABASE} \
             --pgbin=/usr/local/bin/postgres \
             --compute-id=${HOSTNAME##*-}
         env:
