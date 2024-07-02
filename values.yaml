@@ -15,7 +15,7 @@ remoteStorage:
 
 computeNode:
   image:
-    repository: neondatabase/neon
+    repository: neondatabase/compute-node-v16
     pullPolicy: Always
     tag: latest
   podAnnotations: {}
