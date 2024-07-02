@@ -39,6 +39,8 @@ pageserver:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  serviceAccount:
+    annotations: {}
   storage:
     className:
     capacity: 1Gi
