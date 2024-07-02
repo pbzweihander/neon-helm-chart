@@ -1,4 +1,27 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "neon.fullname" . }}-compute-node
+  labels:
+    {{- include "neon.computeNode.labels" . | nindent 4 }}
+data:
+  spec.json: |
+    {
+      "format_version": 1.0,
+      "pageserver_connstring": "{{ include "neon.fullname" . }}-pageserver",
+      "safekeeper_connstrings": [
+        "{{ include "neon.fullname" . }}-safekeeper-0.{{ include "neon.fullname" . }}-safekeeper",
+        "{{ include "neon.fullname" . }}-safekeeper-1.{{ include "neon.fullname" . }}-safekeeper",
+        "{{ include "neon.fullname" . }}-safekeeper-2.{{ include "neon.fullname" . }}-safekeeper"
+      ],
+      "cluster": {
+        "roles": [],
+        "databases": [],
+        "settings": []
+      }
+    }
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: {{ include "neon.fullname" . }}-compute-node
@@ -68,6 +91,7 @@ spec:
             --pgdata=/var/db/postgres/compute \
             --connstr=postgresql://${CONNSTR_USERNAME}{{ if .Values.auth.password }}:${CONNSTR_PASSWORD}{{ end }}@0.0.0.0:5432/${CONNSTR_DATABASE} \
             --pgbin=/usr/local/bin/postgres \
+            --spec-path=/tmp/spec.json
         env:
         - name: CONNSTR_USERNAME
           valueFrom:
@@ -102,9 +126,18 @@ spec:
         resources:
           {{- toYaml .Values.computeNode.resources | nindent 12 }}
         volumeMounts:
+        - name: compute-node-spec
+          mountPath: /tmp/spec.json
+          subPath: spec.json
         - name: compute-node-data
           mountPath: /data/.neon
       volumes:
+      - name: compute-node-spec
+        configMap:
+          name: {{ include "neon.fullname" . }}-compute-node
+          items:
+          - key: spec.json
+            path: spec.json
       - name: compute-node-data
         persistentVolumeClaim:
           claimName: {{ include "neon.fullname" . }}-compute-node
