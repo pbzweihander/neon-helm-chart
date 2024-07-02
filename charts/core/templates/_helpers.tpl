@@ -40,11 +40,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
-{{- define "neon.computeNode.labels" -}}
-{{ include "neon.labels" . }}
-app.kubernetes.io/component: compute-node
-{{- end }}
-
 {{- define "neon.pageserver.labels" -}}
 {{ include "neon.labels" . }}
 app.kubernetes.io/component: pageserver
@@ -58,15 +53,4 @@ app.kubernetes.io/component: safekeeper
 {{- define "neon.storageBroker.labels" -}}
 {{ include "neon.labels" . }}
 app.kubernetes.io/component: storage-broker
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "neon.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "neon.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
 {{- end }}
