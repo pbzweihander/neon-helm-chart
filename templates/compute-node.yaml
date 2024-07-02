@@ -68,7 +68,6 @@ spec:
             --pgdata=/var/db/postgres/compute \
             --connstr=postgresql://${CONNSTR_USERNAME}{{ if .Values.auth.password }}:${CONNSTR_PASSWORD}{{ end }}@0.0.0.0:5432/${CONNSTR_DATABASE} \
             --pgbin=/usr/local/bin/postgres \
-            --compute-id=${HOSTNAME##*-}
         env:
         - name: CONNSTR_USERNAME
           valueFrom:
