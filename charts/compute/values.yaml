@@ -10,7 +10,7 @@ tenantId: ""
 timelineId: ""
 
 image:
-  repository: neondatabase/compute-node-v16
+  repository: neondatabase/compute-node-v15
   pullPolicy: Always
   tag: latest
 podAnnotations: {}
