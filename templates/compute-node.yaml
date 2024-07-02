@@ -7,7 +7,9 @@ metadata:
 type: Opaque
 data:
   connstr_username: {{ .Values.auth.username | b64enc }}
-  connstr_password: {{ .Values.auth.password | b64enc }}
+  {{- with .Values.auth.password }}
+  connstr_password: {{ . | b64enc }}
+  {{- end }}
   connstr_database: {{ .Values.auth.database | b64enc }}
 ---
 apiVersion: apps/v1
@@ -64,7 +66,7 @@ spec:
         - |
           compute_ctl \
             --pgdata=/var/db/postgres/compute \
-            --constr=postgresql://${CONNSTR_USERNAME}:${CONNSTR_PASSWORD}@0.0.0.0:5432/${CONNSTR_DATABASE} \
+            --constr=postgresql://${CONNSTR_USERNAME}{{ if .Values.auth.password }}:${CONNSTR_PASSWORD}{{ end }}@0.0.0.0:5432/${CONNSTR_DATABASE} \
             --pgbin=/usr/local/bin/postgres \
             --compute-id=${HOSTNAME##*-}
         env:
@@ -73,11 +75,13 @@ spec:
             secretKeyRef:
               name: {{ include "neon.fullname" . }}-compute-node
               key: connstr_username
+        {{- if .Values.auth.password }}
         - name: CONNSTR_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ include "neon.fullname" . }}-compute-node
               key: connstr_password
+        {{- end }}
         - name: CONNSTR_DATABASE
           valueFrom:
             secretKeyRef:
