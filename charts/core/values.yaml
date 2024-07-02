@@ -1,16 +1,11 @@
 nameOverride: ""
 fullnameOverride: ""
 
-auth:
-  username: admin
-  password: ""
-  database: postgres
-
 remoteStorage:
   endpoint:
   bucket:
-    name:
-    region:
+    name: ""
+    region: ""
     prefix:
 
 pageserver:
