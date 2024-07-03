@@ -33,6 +33,8 @@ safekeeper:
   podAnnotations: {}
   podLabels: {}
   resources: {}
+  serviceAccount:
+    annotations: {}
 
 storageBroker:
   image:
