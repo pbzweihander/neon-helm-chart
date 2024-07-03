@@ -96,7 +96,7 @@ data:
               "vartype": "string"
           },
           {
-              "name": "recover_prefetch",
+              "name": "recovery_prefetch",
               "value": "off",
               "vartype": "bool"
           }
