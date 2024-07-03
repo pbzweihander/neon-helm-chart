@@ -1,0 +1,201 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "neon-compute.fullname" . }}-primary
+  labels:
+    {{- include "neon-compute.labels" . | nindent 4 }}
+data:
+  spec.json: |
+    {
+      "format_version": 1.0,
+      "pageserver_connstring": "host={{ .Values.pageserver.host }} port={{ .Values.pageserver.port }}",
+      "safekeeper_connstrings": [
+        {{- range $index, $safekeeper := .Values.safekeepers }}
+        {{ if ne $index 0 }}, {{ end }}"{{ $safekeeper.host }}:{{ $safekeeper.port }}"
+        {{- end }}
+      ],
+      "tenant_id": "{{ .Values.tenantId }}",
+      "timeline_id": "{{ .Values.timelineId }}",
+      "cluster": {
+        "roles": [],
+        "databases": [],
+        "settings": [
+          {
+              "name": "listen_addresses",
+              "value": "0.0.0.0",
+              "vartype": "string"
+          },
+          {
+              "name": "max_wal_senders",
+              "value": "10",
+              "vartype": "integer"
+          },
+          {
+              "name": "wal_log_hints",
+              "value": "on",
+              "vartype": "bool"
+          },
+          {
+              "name": "max_replication_slots",
+              "value": "10",
+              "vartype": "integer"
+          },
+          {
+              "name": "hot_standby",
+              "value": "on",
+              "vartype": "bool"
+          },
+          {
+              "name": "shared_buffers",
+              "value": "1MB",
+              "vartype": "string"
+          },
+          {
+              "name": "fsync",
+              "value": "off",
+              "vartype": "bool"
+          },
+          {
+              "name": "max_connections",
+              "value": "100",
+              "vartype": "integer"
+          },
+          {
+              "name": "wal_level",
+              "value": "logical",
+              "vartype": "enum"
+          },
+          {
+              "name": "wal_sender_timeout",
+              "value": "5s",
+              "vartype": "string"
+          },
+          {
+              "name": "wal_keep_size",
+              "value": "0",
+              "vartype": "integer"
+          },
+          {
+              "name": "restart_after_crash",
+              "value": "off",
+              "vartype": "bool"
+          },
+          {
+              "name": "shared_preload_libraries",
+              "value": "neon",
+              "vartype": "string"
+          },
+          {
+              "name": "max_replication_write_lag",
+              "value": "500MB",
+              "vartype": "string"
+          },
+          {
+              "name": "max_replication_flush_lag",
+              "value": "10GB",
+              "vartype": "string"
+          },
+          {
+              "name": "synchronous_standby_names",
+              "value": "walproposer",
+              "vartype": "string"
+          }
+        ]
+      }
+    }
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "neon-compute.fullname" . }}-primary
+  labels:
+    {{- include "neon-compute.primary.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "neon-compute.primary.labels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.primary.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "neon-compute.primary.labels" . | nindent 8 }}
+        {{- with .Values.primary.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      containers:
+      - name: compute-node
+        image: {{ .Values.primary.image.repository }}:{{ .Values.primary.image.tag }}
+        imagePullPolicy: {{ .Values.primary.image.pullPolicy }}
+        command: 
+        - sh
+        - -c
+        - |
+          compute_ctl \
+            --pgdata=/var/db/postgres/compute \
+            --connstr=postgresql://cloud_admin@0.0.0.0:5432/postgres \
+            --pgbin=/usr/local/bin/postgres \
+            --spec-path=/tmp/spec.json
+        env:
+        - name: OTEL_SDK_DISABLED
+          value: "true"
+        ports:
+        - name: http
+          containerPort: 3080
+          protocol: TCP
+        - name: pg
+          containerPort: 5432
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: http
+        resources:
+          {{- toYaml .Values.primary.resources | nindent 12 }}
+        volumeMounts:
+        - name: compute-node-spec
+          mountPath: /tmp/spec.json
+          subPath: spec.json
+      volumes:
+      - name: compute-node-spec
+        configMap:
+          name: {{ include "neon-compute.fullname" . }}-primary
+          items:
+          - key: spec.json
+            path: spec.json
+      {{- with .Values.primary.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.primary.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.primary.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "neon-compute.fullname" . }}-primary
+  labels:
+    {{- include "neon-compute.primary.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "neon-compute.primary.labels" . | nindent 4 }}
+  ports:
+  - name: http
+    targetPort: http
+    protocol: TCP
+    port: 80
+  - name: pg
+    targetPort: pg
+    protocol: TCP
+    port: 5432

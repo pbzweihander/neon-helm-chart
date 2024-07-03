@@ -4,19 +4,35 @@ fullnameOverride: ""
 tenantId: ""
 timelineId: ""
 
-image:
-  repository: neondatabase/compute-node-v15
-  pullPolicy: Always
-  tag: latest
-podAnnotations: {}
-podLabels: {}
-resources: {}
-nodeSelector: {}
-tolerations: []
-affinity: {}
+primary:
+  image:
+    repository: neondatabase/compute-node-v15
+    pullPolicy: Always
+    tag: latest
+  podAnnotations: {}
+  podLabels: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+replica:
+  count: 3
+  image:
+    repository: neondatabase/compute-node-v15
+    pullPolicy: Always
+    tag: latest
+  podAnnotations: {}
+  podLabels: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 pageserver:
-  connstring: ""
+  host: ""
+  port: 5432
 
-safekeeper:
-  connstrings: []
+safekeepers: []
+# - host: ""
+#   port: 5454

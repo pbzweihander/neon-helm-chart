@@ -39,3 +39,13 @@ app.kubernetes.io/name: {{ include "neon-compute.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
+
+{{- define "neon-compute.primary.labels" -}}
+{{ include "neon-compute.labels" . }}
+app.kubernetes.io/component: primary
+{{- end }}
+
+{{- define "neon-compute.replica.labels" -}}
+{{ include "neon-compute.labels" . }}
+app.kubernetes.io/component: replica
+{{- end }}
