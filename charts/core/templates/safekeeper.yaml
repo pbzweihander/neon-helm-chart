@@ -62,7 +62,9 @@ spec:
             --id=${HOSTNAME##*-} \
             --broker-endpoint=http://{{ include "neon.fullname" . }}-storage-broker \
             --remote-storage='{ {{ with .Values.remoteStorage.endpoint }}endpoint = "{{ . }}", {{ end }}bucket_name = "{{ .Values.remoteStorage.bucket.name }}", bucket_region = "{{ .Values.remoteStorage.bucket.region }}"{{ with .Values.remoteStorage.bucket.prefix }}, prefix_in_bucket = "{{ . }}"{{ end }} }' \
-            -D /data/.neon
+            --enable-offload \
+            --delete-offloaded-wal \
+            -D /data
         ports:
         - name: http
           containerPort: 7676
@@ -76,9 +78,6 @@ spec:
             port: http
         resources:
           {{- toYaml .Values.safekeeper.resources | nindent 12 }}
-        volumeMounts:
-        - name: safekeeper-data
-          mountPath: /data/.neon
       {{- with .Values.safekeeper.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -91,20 +90,6 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-  volumeClaimTemplates:
-  - metadata:
-      name: safekeeper-data
-      labels:
-        {{- include "neon.safekeeper.labels" . | nindent 8 }}
-    spec:
-      {{- with .Values.safekeeper.storage.className }}
-      storageClassName: {{ . }}
-      {{- end }}
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: {{ .Values.safekeeper.storage.capacity }}
 ---
 apiVersion: v1
 kind: Service
