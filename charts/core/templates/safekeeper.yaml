@@ -61,7 +61,7 @@ spec:
             --advertise-pg=${HOSTNAME}.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc.cluster.local:5454 \
             --id=${HOSTNAME##*-} \
             --broker-endpoint=http://{{ include "neon.fullname" . }}-storage-broker \
-            --remote-storage='{ {{ with .Values.remoteStorage.endpoint }}endpoint = "{{ . }}", {{ end }}bucket_name = "{{ .Values.remoteStorage.bucket.name }}", bucket_region = "{{ .Values.remoteStorage.bucket.region }}"{{ with .Values.remoteStorage.bucket.prefix }}, prefix_in_bucket = "{{ . }}"{{ end }} }'
+            --remote-storage='{ {{ with .Values.remoteStorage.endpoint }}endpoint = "{{ . }}", {{ end }}bucket_name = "{{ .Values.remoteStorage.bucket.name }}", bucket_region = "{{ .Values.remoteStorage.bucket.region }}"{{ with .Values.remoteStorage.bucket.prefix }}, prefix_in_bucket = "{{ . }}"{{ end }} }' \
             -D /data/.neon
         ports:
         - name: http
