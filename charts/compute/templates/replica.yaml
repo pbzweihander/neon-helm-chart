@@ -101,7 +101,7 @@ data:
     }
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ include "neon-compute.fullname" . }}-replica
   labels:
