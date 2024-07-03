@@ -44,6 +44,7 @@ spec:
           safekeeper \
             --listen-http=0.0.0.0:7676 \
             --listen-pg=0.0.0.0:5454 \
+            --advertise-pg=${HOSTNAME}.{{ include "neon.fullname" . }}-safekeeper.{{ .Release.Namespace }}.svc.cluster.local:5454 \
             --id=${HOSTNAME##*-} \
             --broker-endpoint=http://{{ include "neon.fullname" . }}-storage-broker \
             -D /data
