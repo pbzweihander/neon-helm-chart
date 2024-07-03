@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ include "neon-compute.fullname" . }}
   labels:
@@ -71,8 +71,6 @@ spec:
         - name: compute-node-spec
           mountPath: /tmp/spec.json
           subPath: spec.json
-        - name: compute-node-data
-          mountPath: /data/.neon
       volumes:
       - name: compute-node-spec
         configMap:
@@ -92,17 +90,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-  volumeClaimTemplates:
-  - metadata:
-      name: compute-node-data
-      labels:
-        {{- include "neon-compute.labels" . | nindent 8 }}
-    spec:
-      {{- with .Values.storage.className }}
-      storageClassName: {{ . }}
-      {{- end }}
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: {{ .Values.storage.capacity }}

@@ -20,10 +20,6 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
-storage:
-  className:
-  capacity: 1Gi
-
 pageserver:
   connstring: ""
 
