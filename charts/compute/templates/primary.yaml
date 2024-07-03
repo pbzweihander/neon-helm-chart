@@ -8,6 +8,7 @@ data:
   spec.json: |
     {
       "format_version": 1.0,
+      "mode": "Primary",
       "pageserver_connstring": "host={{ .Values.pageserver.host }} port={{ .Values.pageserver.port }}",
       "safekeeper_connstrings": [
         {{- range $index, $safekeeper := .Values.safekeepers }}
@@ -39,11 +40,6 @@ data:
               "name": "max_replication_slots",
               "value": "10",
               "vartype": "integer"
-          },
-          {
-              "name": "hot_standby",
-              "value": "on",
-              "vartype": "bool"
           },
           {
               "name": "shared_buffers",

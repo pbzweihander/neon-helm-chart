@@ -8,6 +8,7 @@ data:
   spec.json: |
     {
       "format_version": 1.0,
+      "mode": "Replica",
       "pageserver_connstring": "host={{ .Values.pageserver.host }} port={{ .Values.pageserver.port }}",
       "safekeeper_connstrings": [],
       "tenant_id": "{{ .Values.tenantId }}",
@@ -35,11 +36,6 @@ data:
               "name": "max_replication_slots",
               "value": "10",
               "vartype": "integer"
-          },
-          {
-              "name": "hot_standby",
-              "value": "on",
-              "vartype": "bool"
           },
           {
               "name": "shared_buffers",
@@ -80,6 +76,11 @@ data:
               "name": "shared_preload_libraries",
               "value": "neon",
               "vartype": "string"
+          },
+          {
+              "name": "hot_standby",
+              "value": "on",
+              "vartype": "bool"
           },
           {
               "name": "primary_conninfo",
