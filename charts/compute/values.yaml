@@ -1,11 +1,6 @@
 nameOverride: ""
 fullnameOverride: ""
 
-auth:
-  username: admin
-  password: ""
-  database: postgres
-
 tenantId: ""
 timelineId: ""
 

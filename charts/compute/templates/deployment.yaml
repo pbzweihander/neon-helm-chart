@@ -31,27 +31,10 @@ spec:
         - |
           compute_ctl \
             --pgdata=/var/db/postgres/compute \
-            --connstr=postgresql://${CONNSTR_USERNAME}{{ if .Values.auth.password }}:${CONNSTR_PASSWORD}{{ end }}@0.0.0.0:5432/${CONNSTR_DATABASE} \
+            --connstr=postgresql://cloudadmin@0.0.0.0:5432/postgres \
             --pgbin=/usr/local/bin/postgres \
             --spec-path=/tmp/spec.json
         env:
-        - name: CONNSTR_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "neon-compute.fullname" . }}
-              key: connstr_username
-        {{- if .Values.auth.password }}
-        - name: CONNSTR_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "neon-compute.fullname" . }}
-              key: connstr_password
-        {{- end }}
-        - name: CONNSTR_DATABASE
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "neon-compute.fullname" . }}
-              key: connstr_database
         - name: OTEL_SDK_DISABLED
           value: "true"
         ports:
