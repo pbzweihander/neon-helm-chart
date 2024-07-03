@@ -35,6 +35,9 @@ safekeeper:
   resources: {}
   serviceAccount:
     annotations: {}
+  storage:
+    className:
+    capacity: 1Gi
 
 storageBroker:
   image:

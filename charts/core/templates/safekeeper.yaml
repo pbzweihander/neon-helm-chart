@@ -34,6 +34,8 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ include "neon.fullname" . }}-safekeeper
+      securityContext:
+        fsGroup: 1000
       initContainers:
       - name: storage-broker-wait
         image: busybox:1.28
@@ -74,6 +76,9 @@ spec:
             port: http
         resources:
           {{- toYaml .Values.safekeeper.resources | nindent 12 }}
+        volumeMounts:
+        - name: safekeeper-data
+          mountPath: /data
       {{- with .Values.safekeeper.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -86,6 +91,20 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: safekeeper-data
+      labels:
+        {{- include "neon.safekeeper.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.safekeeper.storage.className }}
+      storageClassName: {{ . }}
+      {{- end }}
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.safekeeper.storage.capacity }}
 ---
 apiVersion: v1
 kind: Service
