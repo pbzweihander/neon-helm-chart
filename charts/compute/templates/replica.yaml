@@ -84,7 +84,7 @@ data:
           },
           {
               "name": "primary_conninfo",
-              "value": "host={{ range $index, $safekeeper := .Values.safekeepers }}{{ if ne $index 0 }},{{ end }}$safekeeper.host{{ end }} port={{ range $index, $safekeeper := .Values.safekeepers }}{{ if ne $index 0 }},{{ end }}$safekeeper.port{{ end }} options='-c timeline_id={{ .Values.timelineId }} tenant_id={{ .Values.tenantId }}' application_name=replica replication=true",
+              "value": "host={{ range $index, $safekeeper := .Values.safekeepers }}{{ if ne $index 0 }},{{ end }}{{ $safekeeper.host }}{{ end }} port={{ range $index, $safekeeper := .Values.safekeepers }}{{ if ne $index 0 }},{{ end }}{{ $safekeeper.port }}{{ end }} options='-c timeline_id={{ .Values.timelineId }} tenant_id={{ .Values.tenantId }}' application_name=replica replication=true",
               "vartype": "string"
           },
           {
