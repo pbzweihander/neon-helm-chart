@@ -10,6 +10,8 @@ data:
     listen_pg_addr = "0.0.0.0:64000"
     broker_endpoint = "http://{{ include "neon.fullname" . }}-storage-broker"
     pg_distrib_dir = "/usr/local"
+    http_auth_type = 'Trust'
+    pg_auth_type = 'Trust'
 
     [remote_storage]
     {{- with .Values.remoteStorage.endpoint }}
