@@ -9,11 +9,7 @@ data:
     {
       "format_version": 1.0,
       "pageserver_connstring": "host={{ .Values.pageserver.host }} port={{ .Values.pageserver.port }}",
-      "safekeeper_connstrings": [
-        {{- range $index, $safekeeper := .Values.safekeepers }}
-        {{ if ne $index 0 }}, {{ end }}"{{ $safekeeper.host }}:{{ $safekeeper.port }}"
-        {{- end }}
-      ],
+      "safekeeper_connstrings": [],
       "tenant_id": "{{ .Values.tenantId }}",
       "timeline_id": "{{ .Values.timelineId }}",
       "cluster": {
