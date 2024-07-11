@@ -26,6 +26,7 @@ pageserver:
     capacity: 1Gi
 
 safekeeper:
+  replicaCount: 3
   image:
     repository: neondatabase/neon
     pullPolicy: Always

@@ -108,7 +108,7 @@ metadata:
   labels:
     {{- include "neon-compute.replica.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replica.count }}
+  replicas: {{ .Values.replica.replicaCount }}
   selector:
     matchLabels:
       {{- include "neon-compute.replica.labels" . | nindent 6 }}

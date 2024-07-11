@@ -17,7 +17,7 @@ primary:
   affinity: {}
 
 replica:
-  count: 3
+  replicaCount: 0
   image:
     repository: neondatabase/compute-node-v15
     pullPolicy: Always
