@@ -16,7 +16,7 @@ metadata:
   labels:
     {{- include "neon.safekeeper.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.safekeeper.image.replicaCount }}
+  replicas: {{ .Values.safekeeper.replicaCount }}
   serviceName: {{ include "neon.fullname" . }}-safekeeper
   selector:
     matchLabels:
